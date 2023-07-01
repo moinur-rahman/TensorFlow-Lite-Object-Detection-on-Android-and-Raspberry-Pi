@@ -5,6 +5,7 @@ import os
 import glob
 import pandas as pd
 import xml.etree.ElementTree as ET
+import argparse
 
 def xml_to_csv(path):
     xml_list = []
@@ -26,11 +27,15 @@ def xml_to_csv(path):
     xml_df = pd.DataFrame(xml_list, columns=column_name)
     return xml_df
 
-def main():
+def main(image_path):
     for folder in ['train','validation']:
-        image_path = os.path.join(os.getcwd(), ('images/' + folder))
-        xml_df = xml_to_csv(image_path)
-        xml_df.to_csv(('images/' + folder + '_labels.csv'), index=None)
+        xml_df = xml_to_csv(os.path.join(image_path, folder))
+        xml_df.to_csv(os.path.join(image_path, f'{folder}_labels.csv'), index=None)
         print('Successfully converted xml to csv.')
 
-main()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='XML to CSV converter')
+    parser.add_argument('--image_path', help='Path to the image directory')
+    args = parser.parse_args()
+
+    main(args.image_path)
